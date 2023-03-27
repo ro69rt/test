@@ -1,0 +1,44 @@
+{
+  "products": [
+    {
+      "image": "1.png",
+      "name": "Cat",
+      "price": 111,
+      "id": "1",
+      "available": true,
+      "category": "animals"
+    },
+    {
+      "image": "2.png",
+      "name": "Dog",
+      "price": 222,
+      "id": "2",
+      "available": true,
+      "category": "animals"
+    },
+    {
+      "image": "3.png",
+      "name": "monkey",
+      "price": 222,
+      "id": "3",
+      "available": true,
+      "category": "animals"
+    },
+    {
+      "image": "4.png",
+      "name": "Bmw e39",
+      "price": 24000,
+      "id": "4",
+      "available": true,
+      "category": "cars"
+    },
+    {
+      "image": "5.png",
+      "name": "Bmw e34",
+      "price": 17500,
+      "id": "5",
+      "available": true,
+      "category": "cars"
+    }
+  ]
+}
