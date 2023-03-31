@@ -1,14 +1,20 @@
 <template>
   <div class="timer">
     <div :class="{ active: isStartDisabled }" class="timer-block">
-      <span v-if="hoursVisible" :class="{ active: isStartDisabled }" class="timer-block__count">{{
-        currentTimeHours
-      }}</span>
-      <span v-if="minutesVisible" :class="{ active: isStartDisabled }" class="timer-block__count"
-        >{{ this.min }}:</span
+      <span
+        v-if="hourVisible"
+        :class="{ active: isStartDisabled }"
+        class="timer-block__count"
+        >{{ hour }}:</span
+      >
+      <span
+        v-if="minuteVisible"
+        :class="{ active: isStartDisabled }"
+        class="timer-block__count"
+        >{{ minute }}:</span
       >
       <span :class="{ active: isStartDisabled }" class="timer-block__count">{{
-        currentTimeSecs
+        second
       }}</span>
     </div>
 
@@ -16,7 +22,7 @@
       <svg
         :class="{ active: isStartDisabled }"
         class="timer-btn"
-        @click="runCountdown"
+        @click="timerStart"
         v-if="!isStartDisabled"
         width="17"
         height="20"
@@ -31,7 +37,7 @@
         :class="{ active: isStartDisabled }"
         class="timer-btn"
         v-if="!isPauseDisabled"
-        @click="pauseCountdown"
+        @click="timerPause"
         width="10"
         height="20"
         viewBox="0 0 10 20"
@@ -46,7 +52,7 @@
         :class="{ active: isStartDisabled }"
         class="timer-btn timer-btn__stop"
         :disabled="isResetDisabled"
-        @click="resetCountdown"
+        @click="timerStop"
         width="20"
         height="20"
         viewBox="0 0 20 20"
@@ -56,167 +62,114 @@
         <rect width="20" height="20" fill="#9E9E9E" />
       </svg>
     </div>
+	<span class="delete-icon" @click="deleteTimer">X</span>
   </div>
 </template>
 
 <script>
-import { MyTimer } from "@/lib/timer";
-
 export default {
   name: "vTimer",
   data() {
     return {
-      min: this.minutes,
-      secs: this.seconds,
-      hour: this.hours,
-      timerId: 0,
-      running: false,
+      millisecond: 0,
+      second: 0,
+      minute: 0,
+      hour: 0,
+      startDisabled: true,
+      hourVisible: false,
+      minuteVisible: false,
+      isPauseDisabled: true,
+      isStartDisabled: false,
+      isResetDisabled: true,
       paused: false,
-      stopped: true,
-      mute: this.muted,
-      minutesVisible: false,
-      hoursVisible: false,
-      startVisible: true,
+      stoped: false,
+      interval: 0,
     };
   },
-
-  props: {
-    minutes: {
-      type: Number,
-      validator: function (value) {
-        return value >= 0 && value <= 59;
-      },
-      default: 0,
-    },
-    seconds: {
-      type: Number,
-      validator: function (value) {
-        return value >= 0 && value <= 59;
-      },
-      default: 0,
-    },
-    hours: {
-      type: Number,
-      validator: function (value) {
-        return value >= 0;
-      },
-      default: 0,
-    },
-
-    muted: {
-      type: Boolean,
-      default: false,
-    },
-  },
-  watch: {
-    currentTimeSecs() {
-      if (this.currentTimeSecs >= 59) {
-        this.minutesVisible = true;
-        this.currentTimeSecs === 0;
-      }
-    },
-    currentTimeMinutes() {
-      if (this.currentTimeMinutes >= 59) {
-        this.hoursVisible = true;
-      }
-    },
-  },
-
   computed: {
-    currentTimeSecs: function () {
-      return this.currentTimeSecsFunc();
-    },
-    currentTimeMinutes: function () {
-      return this.currentTimeMinutesFunc();
-    },
-    currentTimeHours: function () {
-      let hours = this.hour < 10 ? "0" + this.hour : this.hour;
-      return `${hours}:`;
-    },
-
-    isStartDisabled: function () {
-      return this.running;
-    },
-    isPauseDisabled: function () {
-      return this.stopped || this.paused;
-    },
-    isResetDisabled: function () {
-      return false;
+    intervalCount: function () {
+      return 0;
     },
   },
-
   methods: {
-    currentTimeSecsFunc() {
-      let seconds = this.secs < 10 ? "0" + this.secs : this.secs;
-      return `${seconds}`;
+    timerStart() {
+      this.interval = setInterval(this.startTimer, 10);
+      this.isStartDisabled = true;
+      this.isPauseDisabled = false;
+      this.isResetDisabled = false;
     },
-    currentTimeMinutesFunc: function () {
-      let minutes = this.min < 10 ? "0" + this.min : this.min;
-      return `${minutes}:`;
+    timerPause() {
+      clearInterval(this.interval);
+      this.interval = clearInterval(this.interval);
+      this.isStartDisabled = false;
+      this.isPauseDisabled = true;
+      this.isResetDisabled = false;
     },
-
-    run: function () {
-      this.running = true;
-      this.paused = false;
-      this.stopped = false;
+    timerStop() {
+      this.isStartDisabled = false;
+      this.isPauseDisabled = true;
+      this.isResetDisabled = false;
+      clearInterval(this.interval);
+      this.clearFields();
     },
-
-    pause: function () {
-      this.running = false;
-      this.paused = true;
-      this.stopped = false;
-    },
-
-    stop: function () {
-      this.running = false;
-      this.paused = false;
-      this.stopped = true;
-    },
-
-    runCountdown: function () {
-      if (this.stopped === true) {
-        if (this.min >= 59) {
-          this.min === 0;
-          this.minutes === 0;
+    startTimer() {
+      this.millisecond++;
+      //milliseconds
+      if (this.millisecond < 9) {
+        this.millisecond = "0" + this.millisecond;
+      }
+      if (this.millisecond > 9) {
+        this.millisecond == this.millisecond;
+      }
+      if (this.millisecond > 99) {
+        this.second ++;
+        if (this.second < 10) {
+          this.second = "0" + this.second;
+        } else {
+          this.second == this.second;
         }
-        this.min = this.minutes;
-        this.secs = this.seconds;
-        this.hour = this.hours;
-        this.startVisible = false;
+        this.millisecond = 0;
+        this.millisecond = "0" + this.millisecond;
       }
 
-      this.timerId = MyTimer.startCountdown(
-        this.min,
-        this.secs,
-        this.hour,
-        this.updateComponentTime
-      );
-      this.run();
-    },
+      // seconds
+     
+      if (this.second > 59) {
+        this.minute++;
+        this.second = 0;
+        this.minuteVisible = true;
 
-    updateComponentTime: function (seconds) {
-      let time = MyTimer.remainingTime(seconds);
-      this.min = Number(time.mm);
-      this.secs = Number(time.ss);
-      this.hour = Number(time.hh);
-      if (time.running === false) {
-        this.stop();
+        // minutes
+        if (this.minute < 10) {
+          this.minute = "0" + this.minute;
+        } else {
+          this.minute == this.minute;
+        }
+        if (this.minute > 59) {
+          this.hour++;
+          if (this.hour < 9) {
+            this.hour = "0" + this.hour;
+          } else {
+            this.hour == this.hour;
+          }
+          this.minute = 0;
+          this.hourVisible = true;
+        }
       }
     },
 
-    pauseCountdown: function () {
-      MyTimer.pauseCountdown(this.timerId);
-      this.startVisible = true;
-      this.pause();
+    clearFields() {
+      this.hour = 0;
+      this.minute = 0;
+      this.second = 0;
+      this.millisecond = 0;
+      this.hour = "00";
+      this.minute = "00";
+      this.second = "00";
+      this.millisecond = "00";
     },
-
-    resetCountdown: function () {
-      MyTimer.stopCountdown(this.timerId);
-      this.min = this.minutes;
-      this.secs = this.seconds;
-      this.hour = this.hours;
-      this.startVisible = true;
-      this.stop();
+	deleteTimer() {
+      this.$emit("deleteTimer");
     },
   },
 };

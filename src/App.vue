@@ -1,10 +1,11 @@
 <template>
   <div class="row">
-    <vTimer v-for="n in items" :key="n" />
+    <vTimer @deleteTimer="deleteTimer(index)" v-for="n in items" :key="n" />
     <div class="timer">
-      <span @click="add">+</span>
+      <span class="add-icon" @click="add">+</span>
     </div>
   </div>
+  <span @click="remove">-</span>
 </template>
 
 <script>
@@ -23,6 +24,9 @@ export default {
   methods: {
     add() {
       this.items.push(1);
+    },
+    deleteTimer(index) {
+      this.items.splice(index, 1);
     },
   },
 };
