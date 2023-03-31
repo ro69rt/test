@@ -1,5 +1,8 @@
-# project
-
+# Timer
+## Check timer
+```
+https://github.com/ro69rt/timer/dist/index.html
+```
 ## Project setup
 ```
 yarn install
