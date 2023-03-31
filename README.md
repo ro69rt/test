@@ -1,7 +1,7 @@
 # Timer
 ## Check timer
 ```
-https://github.com/ro69rt/timer/dist/index.html
+https://ro69rt.github.io/timer/dist/index.html
 ```
 ## Project setup
 ```
